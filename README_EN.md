@@ -141,6 +141,9 @@ The compiled binary will be located at:
 ### Basic Commands
 
 ```bash
+# Quick Start
+osynic-midi
+
 # List all connected MIDI devices
 osynic-midi list-devices
 
@@ -150,6 +153,12 @@ osynic-midi list-configs
 # Start interactive MIDI mapping
 osynic-midi start
 
+# Create a new MIDI mapping configuration file (interactive)
+osynic-midi create
+
+# Load a configuration file from a local path
+osynic-midi load-local
+
 # Start with specific configuration
 osynic-midi start -c configs/my_config.json
 
@@ -158,6 +167,9 @@ osynic-midi start -m notes
 
 # Specify both config and mode (non-interactive)
 osynic-midi start -c configs/my_config.json -m notes
+
+# Load from local path with mode specified
+osynic-midi load-local -c /path/to/config.json -m notes
 ```
 
 ### Interactive Menu
@@ -185,11 +197,25 @@ When you run `osynic-midi start`, you'll see selection menus:
    ```
    Ensure your MIDI device is recognized
 
-2. **View Configurations**
+2. **Choose Configuration Method**
+   
+   **Option A: Use Existing Configuration (Recommended for beginners)**
    ```bash
    osynic-midi list-configs
+   osynic-midi start
    ```
-   Choose a configuration for your use case
+   
+   **Option B: Create New Configuration (Recommended for custom setup)**
+   ```bash
+   osynic-midi create
+   ```
+   Follow the interactive prompts to create your mapping
+   
+   **Option C: Load Local Configuration File**
+   ```bash
+   osynic-midi load-local
+   ```
+   Specify the full path to your configuration file (works anywhere)
 
 3. **Start Mapping**
    ```bash

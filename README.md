@@ -141,6 +141,9 @@ cargo build --release
 ### 基本命令
 
 ```bash
+# 快速使用
+osynic-midi
+
 # 列出所有连接的 MIDI 设备
 osynic-midi list-devices
 
@@ -150,6 +153,12 @@ osynic-midi list-configs
 # 启动交互式 MIDI 映射
 osynic-midi start
 
+# 创建一个新的映射配置文件（交互式）
+osynic-midi create
+
+# 从本地文件加载配置文件
+osynic-midi load-local
+
 # 使用指定配置启动
 osynic-midi start -c configs/my_config.json
 
@@ -158,6 +167,9 @@ osynic-midi start -m notes
 
 # 同时指定配置和模式（非交互式）
 osynic-midi start -c configs/my_config.json -m notes
+
+# 从本地路径加载配置和指定模式
+osynic-midi load-local -c /path/to/config.json -m notes
 ```
 
 ### 交互式菜单
@@ -185,11 +197,25 @@ osynic-midi start -c configs/my_config.json -m notes
    ```
    确保你的 MIDI 设备已识别
 
-2. **查看配置**
+2. **选择配置方式**
+   
+   **方式 A：使用现有配置（推荐新手）**
    ```bash
    osynic-midi list-configs
+   osynic-midi start
    ```
-   选择适合你用途的配置
+   
+   **方式 B：创建新配置（推荐自定义）**
+   ```bash
+   osynic-midi create
+   ```
+   按照提示逐步创建你的映射配置
+   
+   **方式 C：加载本地配置文件**
+   ```bash
+   osynic-midi load-local
+   ```
+   指定配置文件的完整路径（可以在任何位置）
 
 3. **启动映射**
    ```bash
