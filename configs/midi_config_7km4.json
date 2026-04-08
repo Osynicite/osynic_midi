@@ -1,0 +1,24 @@
+{
+    "mapping_mode": "notes", 
+    "octaves": {
+        "4": {
+            "A": "S",
+            "B": "D",
+            "C": "F",
+            "D": "Space",
+            "E": "J",
+            "F": "K",
+            "G": "L"
+        }
+    },
+    "velocity_threshold": 0,
+    "note_mappings": {
+        "57": "S",
+        "59": "D",
+        "60": "F",
+        "62": "Space",
+        "64": "J",
+        "65": "K",
+        "67": "L"
+    }
+}

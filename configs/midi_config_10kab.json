@@ -1,0 +1,32 @@
+{
+    "mapping_mode": "notes", 
+    "octaves": {
+        "3": {
+            "C#/Db": "D",
+            "D#/Eb": "F",
+            "F#/Gb": "Space",
+            "G#/Ab": "J",
+            "A#/Bb": "K"
+        },
+        "4": {
+            "C#/Db": "E",
+            "D#/Eb": "R",
+            "F#/Gb": "T",
+            "G#/Ab": "U",
+            "A#/Bb": "I"
+        }
+    },
+    "velocity_threshold": 0,
+    "note_mappings": {
+        "49": "D",
+        "51": "F",
+        "54": "Space",
+        "56": "J",
+        "58": "K",
+        "61": "E",
+        "63": "R",
+        "66": "T",
+        "68": "U",
+        "70": "I"
+    }
+}

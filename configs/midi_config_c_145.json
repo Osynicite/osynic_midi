@@ -1,0 +1,16 @@
+{
+    "mapping_mode": "notes", 
+    "octaves": {
+        "4": {
+            "C": "Space",
+            "F": "Left",
+            "G": "Right"
+        }
+    },
+    "velocity_threshold": 0,
+    "note_mappings": {
+        "60": "Space",
+        "65": "Left",
+        "67": "Right"
+    }
+}

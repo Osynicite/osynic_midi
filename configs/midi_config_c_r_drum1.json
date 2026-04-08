@@ -1,0 +1,16 @@
+{
+    "mapping_mode": "notes", 
+    "octaves": {
+        "2": {
+            "A#/Bb": "Space",
+            "C#/Db": "Left",
+            "F#/Gb": "Right"
+        }
+    },
+    "velocity_threshold": 0,
+    "note_mappings": {
+        "34": "Space",
+        "37": "Left",
+        "42": "Right"
+    }
+}                   

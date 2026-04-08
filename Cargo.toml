@@ -1,0 +1,38 @@
+[package]
+name = "osynic_midi"
+version = "0.1.0"
+edition = "2024"
+authors = ["Hako Chest <zoneherobrine@gmail.com>"]
+rust-version = "1.85.0"
+description = "A MIDI -> keyboard mapper for the Osynic"
+keywords = ["osynic", "midi", "tui", "mapper"]
+categories = ["games","command-line-utilities"]
+license = "MIT"
+documentation = "https://docs.rs/osynic_midi"
+repository = "https://github.com/osynicite/osynic_midi"
+
+[[bin]]
+name = "osynic-midi"
+path = "src/main.rs"
+
+[lib]
+name = "osynic_midi"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+
+tokio = { version = "1.51.1", features = ["sync","macros","rt-multi-thread"]}
+
+enigo = { version = "0.6.1"}
+midir = { version = "0.10.3" }
+
+clap = { version = "4.6.0", features = ["derive"] , optional = true}
+inquire = "0.9.4"
+
+[features]
+default = ["lib","cli"]
+full = ["lib","cli"]
+cli = ["clap"]
+lib = []
