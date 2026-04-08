@@ -1,16 +1,16 @@
-use std::error::Error;
-use std::io::{stdin, stdout, Write};
-use std::sync::Arc;
-use tokio::sync::mpsc;
-use std::sync::Mutex;
-use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
-use std::{fs, env};
-use midir::MidiInput;
 use enigo::{
     Direction::{Press, Release},
-    Enigo, Settings, Key, Keyboard,
+    Enigo, Key, Keyboard, Settings,
 };
+use midir::MidiInput;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::error::Error;
+use std::io::{Write, stdin, stdout};
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::{env, fs};
+use tokio::sync::mpsc;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "lowercase")]
@@ -21,10 +21,10 @@ enum MappingMode {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Config {
-    mapping_mode: Option<MappingMode>,  // 如果配置文件未指定，则使用命令行参数
+    mapping_mode: Option<MappingMode>, // 如果配置文件未指定，则使用命令行参数
     octaves: HashMap<String, HashMap<String, String>>,
     velocity_threshold: u8,
-    note_mappings: HashMap<u8, String>
+    note_mappings: HashMap<u8, String>,
 }
 
 impl Config {
@@ -66,58 +66,56 @@ impl Config {
             }
         };
 
-        key_str.and_then(|key_str| {
-            match key_str.as_str() {
-                "," => Some(Key::Unicode(',')),
-                "." => Some(Key::Unicode('.')),
-                "/" => Some(Key::Unicode('/')),
-                ";" => Some(Key::Unicode(';')),
-                "'" => Some(Key::Unicode('\'')),
-                "[" => Some(Key::Unicode('[')),
-                "]" => Some(Key::Unicode(']')),
-                "\\" => Some(Key::Unicode('\\')),
-                "-" => Some(Key::Unicode('-')),
-                "=" => Some(Key::Unicode('=')),
-                "Space" => Some(Key::Space),
-                "Left" => Some(Key::LeftArrow),
-                "Right" => Some(Key::RightArrow),
-                "A" => Some(Key::A),
-                "B" => Some(Key::B),
-                "C" => Some(Key::C),
-                "D" => Some(Key::D),
-                "E" => Some(Key::E),
-                "F" => Some(Key::F),
-                "G" => Some(Key::G),
-                "H" => Some(Key::H),
-                "I" => Some(Key::I),
-                "J" => Some(Key::J),
-                "K" => Some(Key::K),
-                "L" => Some(Key::L),
-                "M" => Some(Key::M),
-                "N" => Some(Key::N),
-                "O" => Some(Key::O),
-                "P" => Some(Key::P),
-                "Q" => Some(Key::Q),
-                "R" => Some(Key::R),
-                "S" => Some(Key::S),
-                "T" => Some(Key::T),
-                "U" => Some(Key::U),
-                "V" => Some(Key::V),
-                "W" => Some(Key::W),
-                "X" => Some(Key::X),
-                "Y" => Some(Key::Y),
-                "Z" => Some(Key::Z),
-                "RAlt" => Some(Key::Alt),
-                _ => None,
-            }
+        key_str.and_then(|key_str| match key_str.as_str() {
+            "," => Some(Key::Unicode(',')),
+            "." => Some(Key::Unicode('.')),
+            "/" => Some(Key::Unicode('/')),
+            ";" => Some(Key::Unicode(';')),
+            "'" => Some(Key::Unicode('\'')),
+            "[" => Some(Key::Unicode('[')),
+            "]" => Some(Key::Unicode(']')),
+            "\\" => Some(Key::Unicode('\\')),
+            "-" => Some(Key::Unicode('-')),
+            "=" => Some(Key::Unicode('=')),
+            "Space" => Some(Key::Space),
+            "Left" => Some(Key::LeftArrow),
+            "Right" => Some(Key::RightArrow),
+            "A" => Some(Key::A),
+            "B" => Some(Key::B),
+            "C" => Some(Key::C),
+            "D" => Some(Key::D),
+            "E" => Some(Key::E),
+            "F" => Some(Key::F),
+            "G" => Some(Key::G),
+            "H" => Some(Key::H),
+            "I" => Some(Key::I),
+            "J" => Some(Key::J),
+            "K" => Some(Key::K),
+            "L" => Some(Key::L),
+            "M" => Some(Key::M),
+            "N" => Some(Key::N),
+            "O" => Some(Key::O),
+            "P" => Some(Key::P),
+            "Q" => Some(Key::Q),
+            "R" => Some(Key::R),
+            "S" => Some(Key::S),
+            "T" => Some(Key::T),
+            "U" => Some(Key::U),
+            "V" => Some(Key::V),
+            "W" => Some(Key::W),
+            "X" => Some(Key::X),
+            "Y" => Some(Key::Y),
+            "Z" => Some(Key::Z),
+            "RAlt" => Some(Key::Alt),
+            _ => None,
         })
     }
 }
 
 #[derive(Debug)]
 enum KeyEvent {
-    NoteOn(u8, u8),  // (note, velocity)
-    NoteOff(u8),     // note
+    NoteOn(u8, u8), // (note, velocity)
+    NoteOff(u8),    // note
 }
 
 struct KeyboardMapper {
@@ -128,7 +126,11 @@ struct KeyboardMapper {
 
 impl KeyboardMapper {
     fn new(config: Config, enigo: Arc<Mutex<Enigo>>, mode: MappingMode) -> Self {
-        Self { config, enigo, mode }
+        Self {
+            config,
+            enigo,
+            mode,
+        }
     }
 
     fn handle_event(&self, event: KeyEvent) -> Result<(), Box<dyn Error>> {
@@ -140,7 +142,7 @@ impl KeyboardMapper {
                             enigo_guard.key(key, Press)?;
                         }
                     }
-                },
+                }
                 KeyEvent::NoteOff(note) => {
                     if let Some(key) = self.config.get_key_for_note(note, &self.mode) {
                         enigo_guard.key(key, Release)?;
@@ -156,55 +158,57 @@ impl KeyboardMapper {
 async fn main() {
     match run().await {
         Ok(_) => (),
-        Err(err) => println!("Error: {}", err)
+        Err(err) => println!("Error: {}", err),
     }
 }
 
 async fn run() -> Result<(), Box<dyn Error>> {
     let mut input = String::new();
     let enigo = Arc::new(Mutex::new(Enigo::new(&Settings::default())?));
-    
+
     // 加载配置文件
     let mut config = Config::load("configs/midi_config.json")?;
-    
+
     // 确定映射模式：优先使用命令行参数，其次使用配置文件，最后默认为Notes模式
-    let mode = env::args().nth(1)
+    let mode = env::args()
+        .nth(1)
         .and_then(|arg| match arg.to_lowercase().as_str() {
             "octaves" => Some(MappingMode::Octaves),
             "notes" => Some(MappingMode::Notes),
-            _ => None
+            _ => None,
         })
         .or(config.mapping_mode.take())
         .unwrap_or(MappingMode::Notes);
 
     println!("Using mapping mode: {:?}", mode);
-    
+
     let mapper = Arc::new(KeyboardMapper::new(config, Arc::clone(&enigo), mode));
-    
+
     // 创建channel用于传递MIDI事件
     let (tx, mut rx) = mpsc::channel::<KeyEvent>(32);
-    
+
     // 创建MIDI输入连接
     let midi_in = MidiInput::new("midi-key-mapper")?;
     let in_ports = midi_in.ports();
-    
+
     // 显示可用的MIDI输入端口
     println!("\nAvailable input ports:");
     for (i, p) in in_ports.iter().enumerate() {
         println!("{}: {}", i, midi_in.port_name(p)?);
     }
-    
+
     // 选择MIDI输入端口
     print!("Please select input port: ");
     stdout().flush()?;
     stdin().read_line(&mut input)?;
-    let in_port = in_ports.get(input.trim().parse::<usize>()?)
+    let in_port = in_ports
+        .get(input.trim().parse::<usize>()?)
         .ok_or("Invalid port number")?;
-    
+
     println!("\nOpening connection");
-    
+
     let tx_clone = tx.clone();
-    
+
     let _conn_in = midi_in.connect(
         in_port,
         "midi-key-mapper",
@@ -213,7 +217,7 @@ async fn run() -> Result<(), Box<dyn Error>> {
                 let status = message[0];
                 let note = message[1];
                 let velocity = message[2];
-                
+
                 let event = if status == 0x90 && velocity > 0 {
                     Some(KeyEvent::NoteOn(note, velocity))
                 } else if status == 0x80 || (status == 0x90 && velocity == 0) {
@@ -221,7 +225,7 @@ async fn run() -> Result<(), Box<dyn Error>> {
                 } else {
                     None
                 };
-                
+
                 if let Some(event) = event {
                     let _ = tx_clone.try_send(event);
                 }
@@ -245,11 +249,11 @@ async fn run() -> Result<(), Box<dyn Error>> {
     println!("Connection open. Press Enter to exit.");
     input.clear();
     stdin().read_line(&mut input)?;
-    
+
     // 清理和关闭
     drop(tx);
     event_handler.abort();
-    
+
     Ok(())
 }
 

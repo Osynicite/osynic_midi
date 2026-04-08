@@ -1,8 +1,11 @@
-use std::error::Error;
+use enigo::{
+    Direction::{Press, Release},
+    Enigo, Key, Keyboard,
+};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use serde::{ Deserialize, Serialize };
-use enigo::{ Key, Keyboard, Direction::{ Press, Release }, Enigo };
-use std::sync::{ Arc, Mutex };
+use std::error::Error;
+use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "lowercase")]
@@ -57,50 +60,48 @@ impl Config {
             }
         };
 
-        key_str.and_then(|key_str| {
-            match key_str.as_str() {
-                "," => Some(Key::Unicode(',')),
-                "." => Some(Key::Unicode('.')),
-                "/" => Some(Key::Unicode('/')),
-                ";" => Some(Key::Unicode(';')),
-                "'" => Some(Key::Unicode('\'')),
-                "[" => Some(Key::Unicode('[')),
-                "]" => Some(Key::Unicode(']')),
-                "\\" => Some(Key::Unicode('\\')),
-                "-" => Some(Key::Unicode('-')),
-                "=" => Some(Key::Unicode('=')),
-                "Space" => Some(Key::Space),
-                "Left" => Some(Key::LeftArrow),
-                "Right" => Some(Key::RightArrow),
-                "A" => Some(Key::A),
-                "B" => Some(Key::B),
-                "C" => Some(Key::C),
-                "D" => Some(Key::D),
-                "E" => Some(Key::E),
-                "F" => Some(Key::F),
-                "G" => Some(Key::G),
-                "H" => Some(Key::H),
-                "I" => Some(Key::I),
-                "J" => Some(Key::J),
-                "K" => Some(Key::K),
-                "L" => Some(Key::L),
-                "M" => Some(Key::M),
-                "N" => Some(Key::N),
-                "O" => Some(Key::O),
-                "P" => Some(Key::P),
-                "Q" => Some(Key::Q),
-                "R" => Some(Key::R),
-                "S" => Some(Key::S),
-                "T" => Some(Key::T),
-                "U" => Some(Key::U),
-                "V" => Some(Key::V),
-                "W" => Some(Key::W),
-                "X" => Some(Key::X),
-                "Y" => Some(Key::Y),
-                "Z" => Some(Key::Z),
-                "RAlt" => Some(Key::Alt),
-                _ => None,
-            }
+        key_str.and_then(|key_str| match key_str.as_str() {
+            "," => Some(Key::Unicode(',')),
+            "." => Some(Key::Unicode('.')),
+            "/" => Some(Key::Unicode('/')),
+            ";" => Some(Key::Unicode(';')),
+            "'" => Some(Key::Unicode('\'')),
+            "[" => Some(Key::Unicode('[')),
+            "]" => Some(Key::Unicode(']')),
+            "\\" => Some(Key::Unicode('\\')),
+            "-" => Some(Key::Unicode('-')),
+            "=" => Some(Key::Unicode('=')),
+            "Space" => Some(Key::Space),
+            "Left" => Some(Key::LeftArrow),
+            "Right" => Some(Key::RightArrow),
+            "A" => Some(Key::A),
+            "B" => Some(Key::B),
+            "C" => Some(Key::C),
+            "D" => Some(Key::D),
+            "E" => Some(Key::E),
+            "F" => Some(Key::F),
+            "G" => Some(Key::G),
+            "H" => Some(Key::H),
+            "I" => Some(Key::I),
+            "J" => Some(Key::J),
+            "K" => Some(Key::K),
+            "L" => Some(Key::L),
+            "M" => Some(Key::M),
+            "N" => Some(Key::N),
+            "O" => Some(Key::O),
+            "P" => Some(Key::P),
+            "Q" => Some(Key::Q),
+            "R" => Some(Key::R),
+            "S" => Some(Key::S),
+            "T" => Some(Key::T),
+            "U" => Some(Key::U),
+            "V" => Some(Key::V),
+            "W" => Some(Key::W),
+            "X" => Some(Key::X),
+            "Y" => Some(Key::Y),
+            "Z" => Some(Key::Z),
+            "RAlt" => Some(Key::Alt),
+            _ => None,
         })
     }
 }
@@ -108,7 +109,7 @@ impl Config {
 #[derive(Debug)]
 pub enum KeyEvent {
     NoteOn(u8, u8), // (note, velocity)
-    NoteOff(u8), // note
+    NoteOff(u8),    // note
 }
 
 pub struct KeyboardMapper {
@@ -119,7 +120,11 @@ pub struct KeyboardMapper {
 
 impl KeyboardMapper {
     pub fn new(config: Config, enigo: Arc<Mutex<Enigo>>, mode: MappingMode) -> Self {
-        Self { config, enigo, mode }
+        Self {
+            config,
+            enigo,
+            mode,
+        }
     }
 
     pub fn handle_event(&self, event: KeyEvent) -> Result<(), Box<dyn Error>> {

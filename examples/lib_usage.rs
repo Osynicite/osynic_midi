@@ -1,11 +1,10 @@
+use enigo::{Enigo, Settings};
 /// Example: Using osynic_midi as a library
-/// 
+///
 /// This example demonstrates how external applications can use
 /// the osynic_midi library to implement MIDI mapping functionality
 /// without relying on the CLI.
-
-use osynic_midi::{Config, MappingMode, KeyboardMapper};
-use enigo::{Enigo, Settings};
+use osynic_midi::{Config, KeyboardMapper, MappingMode};
 use std::sync::{Arc, Mutex};
 
 #[tokio::main]
@@ -17,7 +16,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = Config::load("configs/midi_config.json")?;
     println!("   ✓ Config loaded successfully");
     println!("   - Velocity threshold: {}", config.velocity_threshold);
-    println!("   - Note mappings available: {}", config.note_mappings.len());
+    println!(
+        "   - Note mappings available: {}",
+        config.note_mappings.len()
+    );
 
     // Example 2: Create a keyboard mapper
     println!("\n2. Creating keyboard mapper...");

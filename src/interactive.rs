@@ -1,7 +1,7 @@
-use std::error::Error;
-use inquire::Select;
 use crate::core::MappingMode;
 use crate::discovery::list_configs;
+use inquire::Select;
+use std::error::Error;
 
 /// Prompt user to select a configuration file
 pub fn select_config() -> Result<String, Box<dyn Error>> {
@@ -33,7 +33,10 @@ pub fn select_device() -> Result<String, Box<dyn Error>> {
 
 /// Prompt user to select mapping mode
 pub fn select_mode() -> Result<MappingMode, Box<dyn Error>> {
-    let modes = vec!["Notes (individual note to key mapping)", "Octaves (octave-based mapping)"];
+    let modes = vec![
+        "Notes (individual note to key mapping)",
+        "Octaves (octave-based mapping)",
+    ];
 
     println!();
     let selection = Select::new("Select mapping mode:", modes).prompt()?;

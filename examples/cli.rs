@@ -1,15 +1,18 @@
-use std::error::Error;
-use std::sync::Arc;
-use tokio::sync::mpsc;
-use std::sync::Mutex;
-use std::collections::HashMap;
-use std::path::Path;
-use serde::{ Deserialize, Serialize };
-use std::fs;
-use midir::MidiInput;
-use enigo::{ Direction::{ Press, Release }, Enigo, Settings, Key, Keyboard };
-use clap::{ Parser, Subcommand };
+use clap::{Parser, Subcommand};
+use enigo::{
+    Direction::{Press, Release},
+    Enigo, Key, Keyboard, Settings,
+};
 use inquire::Select;
+use midir::MidiInput;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::error::Error;
+use std::fs;
+use std::path::Path;
+use std::sync::Arc;
+use std::sync::Mutex;
+use tokio::sync::mpsc;
 
 #[derive(Parser)]
 #[command(name = "osynic-midi")]
@@ -98,50 +101,48 @@ impl Config {
             }
         };
 
-        key_str.and_then(|key_str| {
-            match key_str.as_str() {
-                "," => Some(Key::Unicode(',')),
-                "." => Some(Key::Unicode('.')),
-                "/" => Some(Key::Unicode('/')),
-                ";" => Some(Key::Unicode(';')),
-                "'" => Some(Key::Unicode('\'')),
-                "[" => Some(Key::Unicode('[')),
-                "]" => Some(Key::Unicode(']')),
-                "\\" => Some(Key::Unicode('\\')),
-                "-" => Some(Key::Unicode('-')),
-                "=" => Some(Key::Unicode('=')),
-                "Space" => Some(Key::Space),
-                "Left" => Some(Key::LeftArrow),
-                "Right" => Some(Key::RightArrow),
-                "A" => Some(Key::A),
-                "B" => Some(Key::B),
-                "C" => Some(Key::C),
-                "D" => Some(Key::D),
-                "E" => Some(Key::E),
-                "F" => Some(Key::F),
-                "G" => Some(Key::G),
-                "H" => Some(Key::H),
-                "I" => Some(Key::I),
-                "J" => Some(Key::J),
-                "K" => Some(Key::K),
-                "L" => Some(Key::L),
-                "M" => Some(Key::M),
-                "N" => Some(Key::N),
-                "O" => Some(Key::O),
-                "P" => Some(Key::P),
-                "Q" => Some(Key::Q),
-                "R" => Some(Key::R),
-                "S" => Some(Key::S),
-                "T" => Some(Key::T),
-                "U" => Some(Key::U),
-                "V" => Some(Key::V),
-                "W" => Some(Key::W),
-                "X" => Some(Key::X),
-                "Y" => Some(Key::Y),
-                "Z" => Some(Key::Z),
-                "RAlt" => Some(Key::Alt),
-                _ => None,
-            }
+        key_str.and_then(|key_str| match key_str.as_str() {
+            "," => Some(Key::Unicode(',')),
+            "." => Some(Key::Unicode('.')),
+            "/" => Some(Key::Unicode('/')),
+            ";" => Some(Key::Unicode(';')),
+            "'" => Some(Key::Unicode('\'')),
+            "[" => Some(Key::Unicode('[')),
+            "]" => Some(Key::Unicode(']')),
+            "\\" => Some(Key::Unicode('\\')),
+            "-" => Some(Key::Unicode('-')),
+            "=" => Some(Key::Unicode('=')),
+            "Space" => Some(Key::Space),
+            "Left" => Some(Key::LeftArrow),
+            "Right" => Some(Key::RightArrow),
+            "A" => Some(Key::A),
+            "B" => Some(Key::B),
+            "C" => Some(Key::C),
+            "D" => Some(Key::D),
+            "E" => Some(Key::E),
+            "F" => Some(Key::F),
+            "G" => Some(Key::G),
+            "H" => Some(Key::H),
+            "I" => Some(Key::I),
+            "J" => Some(Key::J),
+            "K" => Some(Key::K),
+            "L" => Some(Key::L),
+            "M" => Some(Key::M),
+            "N" => Some(Key::N),
+            "O" => Some(Key::O),
+            "P" => Some(Key::P),
+            "Q" => Some(Key::Q),
+            "R" => Some(Key::R),
+            "S" => Some(Key::S),
+            "T" => Some(Key::T),
+            "U" => Some(Key::U),
+            "V" => Some(Key::V),
+            "W" => Some(Key::W),
+            "X" => Some(Key::X),
+            "Y" => Some(Key::Y),
+            "Z" => Some(Key::Z),
+            "RAlt" => Some(Key::Alt),
+            _ => None,
         })
     }
 }
@@ -149,7 +150,7 @@ impl Config {
 #[derive(Debug)]
 enum KeyEvent {
     NoteOn(u8, u8), // (note, velocity)
-    NoteOff(u8), // note
+    NoteOff(u8),    // note
 }
 
 struct KeyboardMapper {
@@ -160,7 +161,11 @@ struct KeyboardMapper {
 
 impl KeyboardMapper {
     fn new(config: Config, enigo: Arc<Mutex<Enigo>>, mode: MappingMode) -> Self {
-        Self { config, enigo, mode }
+        Self {
+            config,
+            enigo,
+            mode,
+        }
     }
 
     fn handle_event(&self, event: KeyEvent) -> Result<(), Box<dyn Error>> {
@@ -283,7 +288,10 @@ fn select_device() -> Result<usize, Box<dyn Error>> {
 
 /// Prompt user to select mapping mode
 fn select_mode() -> Result<MappingMode, Box<dyn Error>> {
-    let modes = vec!["Notes (individual note to key mapping)", "Octaves (octave-based mapping)"];
+    let modes = vec![
+        "Notes (individual note to key mapping)",
+        "Octaves (octave-based mapping)",
+    ];
 
     println!();
     let selection = Select::new("Select mapping mode:", modes).prompt()?;
@@ -303,9 +311,9 @@ async fn main() {
     let args = Cli::parse();
 
     let result = match args.command {
-        Some(Commands::ListDevices) => { display_devices() }
-        Some(Commands::ListConfigs) => { display_configs() }
-        Some(Commands::Start { config, mode }) => { start_mapping(config, mode).await }
+        Some(Commands::ListDevices) => display_devices(),
+        Some(Commands::ListConfigs) => display_configs(),
+        Some(Commands::Start { config, mode }) => start_mapping(config, mode).await,
         None => {
             // Default: start interactive setup
             start_mapping(args.config, args.mode).await
@@ -320,7 +328,7 @@ async fn main() {
 
 async fn start_mapping(
     config_path: Option<String>,
-    mode_arg: Option<String>
+    mode_arg: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     // Select configuration file
     let config_path = match config_path {
@@ -334,18 +342,15 @@ async fn start_mapping(
 
     // Determine mapping mode
     let mode = match mode_arg {
-        Some(m) => {
-            match m.to_lowercase().as_str() {
-                "octaves" => MappingMode::Octaves,
-                "notes" => MappingMode::Notes,
-                _ => select_mode()?,
-            }
-        }
-        None => {
-            config.mapping_mode
-                .take()
-                .unwrap_or_else(|| select_mode().unwrap_or(MappingMode::Notes))
-        }
+        Some(m) => match m.to_lowercase().as_str() {
+            "octaves" => MappingMode::Octaves,
+            "notes" => MappingMode::Notes,
+            _ => select_mode()?,
+        },
+        None => config
+            .mapping_mode
+            .take()
+            .unwrap_or_else(|| select_mode().unwrap_or(MappingMode::Notes)),
     };
 
     println!("Using mapping mode: {:?}", mode);
@@ -391,7 +396,7 @@ async fn start_mapping(
                 }
             }
         },
-        ()
+        (),
     )?;
 
     // Create event handler task

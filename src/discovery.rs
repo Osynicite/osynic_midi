@@ -1,7 +1,7 @@
-use std::error::Error;
-use std::path::Path;
-use std::fs;
 use midir::MidiInput;
+use std::error::Error;
+use std::fs;
+use std::path::Path;
 
 /// List available configuration files in the configs directory
 pub fn list_configs() -> Result<Vec<String>, Box<dyn Error>> {

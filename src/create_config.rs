@@ -1,9 +1,9 @@
-use std::error::Error;
-use std::path::Path;
-use std::fs;
+use crate::core::{Config, MappingMode};
+use inquire::{Select, Text};
 use std::collections::HashMap;
-use inquire::{ Select, Text };
-use crate::core::{ Config, MappingMode };
+use std::error::Error;
+use std::fs;
+use std::path::Path;
 
 /// Interactive mode to create a new configuration file
 /// Returns the path to the created configuration file
@@ -60,7 +60,10 @@ pub async fn create_config_interactive() -> Result<String, Box<dyn Error>> {
 
     println!("\n✅ Configuration file created successfully!");
     println!("📂 Saved to: {}", config_filename);
-    println!("\n💡 You can now use it with: osynic-midi start -c {}", config_filename);
+    println!(
+        "\n💡 You can now use it with: osynic-midi start -c {}",
+        config_filename
+    );
 
     Ok(config_filename)
 }
@@ -73,9 +76,8 @@ async fn create_notes_mode_config(velocity_threshold: u8) -> Result<Config, Box<
     let mut note_mappings = HashMap::new();
 
     loop {
-        let note_input = Text::new(
-            "Enter MIDI note number (0-127, or 'done' to finish):"
-        ).prompt()?;
+        let note_input =
+            Text::new("Enter MIDI note number (0-127, or 'done' to finish):").prompt()?;
 
         if note_input.to_lowercase() == "done" || note_input.is_empty() {
             break;
@@ -83,9 +85,11 @@ async fn create_notes_mode_config(velocity_threshold: u8) -> Result<Config, Box<
 
         match note_input.parse::<u8>() {
             Ok(note) if note <= 127 => {
-                let key = Text::new(
-                    &format!("Enter keyboard key for MIDI note {} (e.g., A, Space, Left):", note)
-                ).prompt()?;
+                let key = Text::new(&format!(
+                    "Enter keyboard key for MIDI note {} (e.g., A, Space, Left):",
+                    note
+                ))
+                .prompt()?;
 
                 note_mappings.insert(note, key);
                 println!("✓ Note {} -> {}", note, note_mappings.get(&note).unwrap());
@@ -109,22 +113,12 @@ async fn create_octaves_mode_config(velocity_threshold: u8) -> Result<Config, Bo
 
     let mut octaves = HashMap::new();
     let pitches = vec![
-        "C",
-        "C#/Db",
-        "D",
-        "D#/Eb",
-        "E",
-        "F",
-        "F#/Gb",
-        "G",
-        "G#/Ab",
-        "A",
-        "A#/Bb",
-        "B"
+        "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B",
     ];
 
     loop {
-        let octave_input = Text::new("Enter octave number (0-10, or 'done' to finish):").prompt()?;
+        let octave_input =
+            Text::new("Enter octave number (0-10, or 'done' to finish):").prompt()?;
 
         if octave_input.to_lowercase() == "done" || octave_input.is_empty() {
             break;
@@ -162,7 +156,8 @@ async fn create_octaves_mode_config(velocity_threshold: u8) -> Result<Config, Bo
 /// Allow user to load configuration from a local file path
 pub fn select_local_config() -> Result<String, Box<dyn Error>> {
     println!();
-    let config_path = Text::new("Enter configuration file path (absolute or relative):").prompt()?;
+    let config_path =
+        Text::new("Enter configuration file path (absolute or relative):").prompt()?;
 
     // Verify the file exists
     if !Path::new(&config_path).exists() {

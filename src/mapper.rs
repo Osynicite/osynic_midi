@@ -1,17 +1,17 @@
+use enigo::{Enigo, Settings};
+use midir::MidiInput;
 use std::error::Error;
 use std::sync::Arc;
-use tokio::sync::mpsc;
 use std::sync::Mutex;
-use midir::MidiInput;
-use enigo::{ Enigo, Settings };
+use tokio::sync::mpsc;
 
-use crate::core::{ Config, MappingMode, KeyboardMapper, KeyEvent };
+use crate::core::{Config, KeyEvent, KeyboardMapper, MappingMode};
 
 /// Start MIDI to keyboard mapping
 pub async fn start_mapping(
     config_path: String,
     device_name: String,
-    mode: MappingMode
+    mode: MappingMode,
 ) -> Result<(), Box<dyn Error>> {
     // Load configuration
     println!("\nLoading configuration from: {}", config_path);
@@ -59,7 +59,7 @@ pub async fn start_mapping(
                 }
             }
         },
-        ()
+        (),
     )?;
 
     // Create event handler task
