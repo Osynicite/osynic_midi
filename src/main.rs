@@ -1,4 +1,3 @@
-!#[cfg(feature = "cli")]
 use clap::{Parser, Subcommand};
 use inquire::Select;
 use osynic_midi::{
